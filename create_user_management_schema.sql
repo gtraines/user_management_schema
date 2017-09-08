@@ -2,6 +2,7 @@
 -- Wed 06 Sep 2017 10:14:55 PM MST
 -- Model: New Model    Version: 1.0
 -- MySQL Workbench Forward Engineering
+use bd_proto;
 
 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
@@ -28,33 +29,16 @@ CREATE TABLE IF NOT EXISTS `user_type` (
   `created_date` DATETIME NOT NULL,
   `created_by` INT NOT NULL,
   `modified_date` DATETIME NULL DEFAULT NULL,
-  `modified_by` VARCHAR(36) NULL DEFAULT NULL,
+  `modified_by` INT NULL DEFAULT NULL,
   `deactivated_date` DATETIME NULL DEFAULT NULL,
-  `deactivated_by` VARCHAR(36) NULL DEFAULT NULL,
+  `deactivated_by` INT NULL DEFAULT NULL,
   `valid_from_date` DATETIME NOT NULL,
   `valid_to_date` DATETIME NULL DEFAULT NULL,
   PRIMARY KEY (`user_type_id`),
   UNIQUE INDEX `user_type_id` (`user_type_id` ASC),
+  UNIQUE INDEX `user_type_uuid` (`user_type_uuid` ASC),
   UNIQUE INDEX `slug` (`slug` ASC),
-  UNIQUE INDEX `display_name` (`display_name` ASC),
-  INDEX `fk_user_type_user1_idx` (`created_by` ASC),
-  INDEX `fk_user_type_user2_idx` (`modified_by` ASC),
-  INDEX `fk_user_type_user3_idx` (`deactivated_by` ASC),
-  CONSTRAINT `fk_user_type_user1`
-    FOREIGN KEY (`created_by`)
-    REFERENCES `user` (`user_id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_user_type_user2`
-    FOREIGN KEY (`modified_by`)
-    REFERENCES `user` (`user_id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_user_type_user3`
-    FOREIGN KEY (`deactivated_by`)
-    REFERENCES `user` (`user_id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+  UNIQUE INDEX `display_name` (`display_name` ASC))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = big5;
 
@@ -65,6 +49,7 @@ DEFAULT CHARACTER SET = big5;
 CREATE TABLE IF NOT EXISTS `user` (
   `user_id` INT NOT NULL AUTO_INCREMENT,
   `user_uuid` VARCHAR(36) NOT NULL,
+  `user_type_id`  INT NOT NULL,
   `email` VARCHAR(255) NOT NULL,
   `password` VARCHAR(255) NULL DEFAULT NULL,
   `confirmed_at` DATETIME NULL DEFAULT NULL,
@@ -78,23 +63,19 @@ CREATE TABLE IF NOT EXISTS `user` (
   `created_date` DATETIME NOT NULL,
   `created_by` INT NOT NULL,
   `modified_date` DATETIME NULL DEFAULT NULL,
-  `modified_by` VARCHAR(36) NULL DEFAULT NULL,
+  `modified_by` INT NULL DEFAULT NULL,
   `deactivated_date` DATETIME NULL DEFAULT NULL,
-  `deactivated_by` VARCHAR(36) NULL DEFAULT NULL,
+  `deactivated_by` INT NULL DEFAULT NULL,
   `valid_from_date` DATETIME NOT NULL,
   `valid_to_date` DATETIME NULL DEFAULT NULL,
   PRIMARY KEY (`user_id`),
   UNIQUE INDEX `user_id` (`user_id` ASC),
+  UNIQUE INDEX `user_uuid` (`user_uuid` ASC),
   INDEX `fk_user_user_type1_idx` (`user_type_id` ASC),
   INDEX `fk_user_user1_idx` (`created_by` ASC),
   CONSTRAINT `fk_user_user_type1`
     FOREIGN KEY (`user_type_id`)
     REFERENCES `user_type` (`user_type_id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_user_user1`
-    FOREIGN KEY (`created_by`)
-    REFERENCES `user` (`user_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
@@ -115,13 +96,14 @@ CREATE TABLE IF NOT EXISTS `address_type` (
   `created_date` DATETIME NOT NULL,
   `created_by` INT NOT NULL,
   `modified_date` DATETIME NULL DEFAULT NULL,
-  `modified_by` VARCHAR(36) NULL DEFAULT NULL,
+  `modified_by` INT NULL DEFAULT NULL,
   `deactivated_date` DATETIME NULL DEFAULT NULL,
-  `deactivated_by` VARCHAR(36) NULL DEFAULT NULL,
+  `deactivated_by` INT NULL DEFAULT NULL,
   `valid_from_date` DATETIME NOT NULL,
   `valid_to_date` DATETIME NULL DEFAULT NULL,
   PRIMARY KEY (`address_type_id`),
   UNIQUE INDEX `address_type_id` (`address_type_id` ASC),
+  UNIQUE INDEX `address_type_uuid` (`address_type_uuid` ASC),
   UNIQUE INDEX `slug` (`slug` ASC),
   UNIQUE INDEX `display_name` (`display_name` ASC),
   INDEX `fk_address_type_user1_idx` (`created_by` ASC),
@@ -160,13 +142,14 @@ CREATE TABLE IF NOT EXISTS `contact_type` (
   `created_date` DATETIME NOT NULL,
   `created_by` INT NOT NULL,
   `modified_date` DATETIME NULL DEFAULT NULL,
-  `modified_by` VARCHAR(36) NULL DEFAULT NULL,
+  `modified_by` INT NULL DEFAULT NULL,
   `deactivated_date` DATETIME NULL DEFAULT NULL,
-  `deactivated_by` VARCHAR(36) NULL DEFAULT NULL,
+  `deactivated_by` INT NULL DEFAULT NULL,
   `valid_from_date` DATETIME NOT NULL,
   `valid_to_date` DATETIME NULL DEFAULT NULL,
   PRIMARY KEY (`contact_type_id`),
   UNIQUE INDEX `contact_type_id` (`contact_type_id` ASC),
+  UNIQUE INDEX `contact_type_uuid` (`contact_type_uuid` ASC),
   UNIQUE INDEX `slug` (`slug` ASC),
   UNIQUE INDEX `display_name` (`display_name` ASC),
   INDEX `fk_contact_type_user1_idx` (`created_by` ASC),
@@ -201,9 +184,9 @@ CREATE TABLE IF NOT EXISTS `metadata` (
   `created_date` DATETIME NOT NULL,
   `created_by` INT NOT NULL,
   `modified_date` DATETIME NULL DEFAULT NULL,
-  `modified_by` VARCHAR(36) NULL DEFAULT NULL,
+  `modified_by` INT NULL DEFAULT NULL,
   `deactivated_date` DATETIME NULL DEFAULT NULL,
-  `deactivated_by` VARCHAR(36) NULL DEFAULT NULL,
+  `deactivated_by` INT NULL DEFAULT NULL,
   `valid_from_date` DATETIME NOT NULL,
   `valid_to_date` DATETIME NULL DEFAULT NULL,
   PRIMARY KEY (`tablename_id`),
@@ -226,9 +209,9 @@ CREATE TABLE IF NOT EXISTS `organization_type` (
   `created_date` DATETIME NOT NULL,
   `created_by` INT NOT NULL,
   `modified_date` DATETIME NULL DEFAULT NULL,
-  `modified_by` VARCHAR(36) NULL DEFAULT NULL,
+  `modified_by` INT NULL DEFAULT NULL,
   `deactivated_date` DATETIME NULL DEFAULT NULL,
-  `deactivated_by` VARCHAR(36) NULL DEFAULT NULL,
+  `deactivated_by` INT NULL DEFAULT NULL,
   `valid_from_date` DATETIME NOT NULL,
   `valid_to_date` DATETIME NULL DEFAULT NULL,
   PRIMARY KEY (`organization_type_id`),
@@ -260,13 +243,14 @@ CREATE TABLE IF NOT EXISTS `organization` (
   `created_date` DATETIME NOT NULL,
   `created_by` INT NOT NULL,
   `modified_date` DATETIME NULL DEFAULT NULL,
-  `modified_by` VARCHAR(36) NULL DEFAULT NULL,
+  `modified_by` INT NULL DEFAULT NULL,
   `deactivated_date` DATETIME NULL DEFAULT NULL,
-  `deactivated_by` VARCHAR(36) NULL DEFAULT NULL,
+  `deactivated_by` INT NULL DEFAULT NULL,
   `valid_from_date` DATETIME NOT NULL,
   `valid_to_date` DATETIME NULL DEFAULT NULL,
   PRIMARY KEY (`organization_id`),
   UNIQUE INDEX `organization_id` (`organization_id` ASC),
+  UNIQUE INDEX `organization_uuid` (`organization_uuid` ASC),
   UNIQUE INDEX `name` (`name` ASC),
   INDEX `fk_organization_organization_type1_idx` (`organization_type_id` ASC),
   INDEX `fk_organization_organization1_idx` (`parent_organization_id` ASC),
@@ -274,11 +258,6 @@ CREATE TABLE IF NOT EXISTS `organization` (
   CONSTRAINT `fk_organization_organization_type1`
     FOREIGN KEY (`organization_type_id`)
     REFERENCES `organization_type` (`organization_type_id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_organization_organization1`
-    FOREIGN KEY (`parent_organization_id`)
-    REFERENCES `organization` (`organization_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_organization_user1`
@@ -308,13 +287,14 @@ CREATE TABLE IF NOT EXISTS `organization_address` (
   `created_date` DATETIME NOT NULL,
   `created_by` INT NOT NULL,
   `modified_date` DATETIME NULL DEFAULT NULL,
-  `modified_by` VARCHAR(36) NULL DEFAULT NULL,
+  `modified_by` INT NULL DEFAULT NULL,
   `deactivated_date` DATETIME NULL DEFAULT NULL,
-  `deactivated_by` VARCHAR(36) NULL DEFAULT NULL,
+  `deactivated_by` INT NULL DEFAULT NULL,
   `valid_from_date` DATETIME NOT NULL,
   `valid_to_date` DATETIME NULL DEFAULT NULL,
   PRIMARY KEY (`organization_address_id`),
   UNIQUE INDEX `organization_address_id` (`organization_address_id` ASC),
+  UNIQUE INDEX `organization_address_uuid` (`organization_address_uuid` ASC),
   INDEX `fk_organization_address_organization_id_idx` (`organization_id` ASC),
   INDEX `fk_organization_address_address_type1_idx` (`address_type_id` ASC),
   INDEX `fk_organization_address_user1_idx` (`created_by` ASC),
@@ -351,13 +331,14 @@ CREATE TABLE IF NOT EXISTS `organization_contact` (
   `created_date` DATETIME NOT NULL,
   `created_by` INT NOT NULL,
   `modified_date` DATETIME NULL DEFAULT NULL,
-  `modified_by` VARCHAR(36) NULL DEFAULT NULL,
+  `modified_by` INT NULL DEFAULT NULL,
   `deactivated_date` DATETIME NULL DEFAULT NULL,
-  `deactivated_by` VARCHAR(36) NULL DEFAULT NULL,
+  `deactivated_by` INT NULL DEFAULT NULL,
   `valid_from_date` DATETIME NOT NULL,
   `valid_to_date` DATETIME NULL DEFAULT NULL,
   PRIMARY KEY (`organization_contact_id`),
   UNIQUE INDEX `organization_contact_id` (`organization_contact_id` ASC),
+  UNIQUE INDEX `organization_contact_uuid` (`organization_contact_uuid` ASC),
   INDEX `fk_organization_contact_organization1_idx` (`organization_id` ASC),
   INDEX `fk_organization_contact_contact_type1_idx` (`contact_type_id` ASC),
   INDEX `fk_organization_contact_user1_idx` (`created_by` ASC),
@@ -395,13 +376,14 @@ CREATE TABLE IF NOT EXISTS `role_type` (
   `created_date` DATETIME NOT NULL,
   `created_by` INT NOT NULL,
   `modified_date` DATETIME NULL DEFAULT NULL,
-  `modified_by` VARCHAR(36) NULL DEFAULT NULL,
+  `modified_by` INT NULL DEFAULT NULL,
   `deactivated_date` DATETIME NULL DEFAULT NULL,
-  `deactivated_by` VARCHAR(36) NULL DEFAULT NULL,
+  `deactivated_by` INT NULL DEFAULT NULL,
   `valid_from_date` DATETIME NOT NULL,
   `valid_to_date` DATETIME NULL DEFAULT NULL,
   PRIMARY KEY (`role_type_id`),
   UNIQUE INDEX `role_type_id` (`role_type_id` ASC),
+  UNIQUE INDEX `role_type_uuid` (`role_type_uuid` ASC),
   UNIQUE INDEX `slug` (`slug` ASC),
   UNIQUE INDEX `display_name` (`display_name` ASC),
   INDEX `fk_role_type_user1_idx` (`created_by` ASC),
@@ -420,7 +402,7 @@ DEFAULT CHARACTER SET = big5;
 CREATE TABLE IF NOT EXISTS `role` (
   `role_id` INT NOT NULL AUTO_INCREMENT,
 `role_uuid` VARCHAR(36) NOT NULL,
-  `parent_role_id` VARCHAR(36) NULL DEFAULT NULL,
+  `parent_role_id` INT DEFAULT NULL,
   `role_type_id` INT NOT NULL,
   `display_name` VARCHAR(255) NOT NULL,
   `description` VARCHAR(255) NULL DEFAULT NULL,
@@ -429,13 +411,14 @@ CREATE TABLE IF NOT EXISTS `role` (
   `created_date` DATETIME NOT NULL,
   `created_by` INT NOT NULL,
   `modified_date` DATETIME NULL DEFAULT NULL,
-  `modified_by` VARCHAR(36) NULL DEFAULT NULL,
+  `modified_by` INT NULL DEFAULT NULL,
   `deactivated_date` DATETIME NULL DEFAULT NULL,
-  `deactivated_by` VARCHAR(36) NULL DEFAULT NULL,
+  `deactivated_by` INT NULL DEFAULT NULL,
   `valid_from_date` DATETIME NOT NULL,
   `valid_to_date` DATETIME NULL DEFAULT NULL,
   PRIMARY KEY (`role_id`),
   UNIQUE INDEX `role_id` (`role_id` ASC),
+  UNIQUE INDEX `role_uuid` (`role_uuid` ASC),
   UNIQUE INDEX `display_name` (`display_name` ASC),
   INDEX `fk_role_role1_idx` (`parent_role_id` ASC),
   INDEX `fk_role_role_type1_idx` (`role_type_id` ASC),
@@ -473,13 +456,14 @@ CREATE TABLE IF NOT EXISTS `organization_user_role` (
   `created_date` DATETIME NOT NULL,
   `created_by` INT NOT NULL,
   `modified_date` DATETIME NULL DEFAULT NULL,
-  `modified_by` VARCHAR(36) NULL DEFAULT NULL,
+  `modified_by` INT NULL DEFAULT NULL,
   `deactivated_date` DATETIME NULL DEFAULT NULL,
-  `deactivated_by` VARCHAR(36) NULL DEFAULT NULL,
+  `deactivated_by` INT NULL DEFAULT NULL,
   `valid_from_date` DATETIME NOT NULL,
   `valid_to_date` DATETIME NULL DEFAULT NULL,
   PRIMARY KEY (`organization_user_role_id`),
   UNIQUE INDEX `organization_user_role_id` (`organization_user_role_id` ASC),
+  UNIQUE INDEX `organization_user_role_uuid` (`organization_user_role_uuid` ASC),
   INDEX `fk_organization_user_role_organization1_idx` (`organization_id` ASC),
   INDEX `fk_organization_user_role_user1_idx` (`user_id` ASC),
   INDEX `fk_organization_user_role_role1_idx` (`role_id` ASC),
